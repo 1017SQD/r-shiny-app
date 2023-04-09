@@ -1,0 +1,68 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(plotly)
+library(dplyr)
+library(tidyr)
+```
+
+
+```{r}
+spotify <- read.csv("~/RShinyApplication/app/data/Spotify_Youtube.csv")
+```
+
+```{r}
+which(colSums(is.na(spotify))>0)
+
+
+```
+```{r}
+spotify[is.na(spotify)] <- 0
+which(colSums(is.na(spotify))>0)
+
+```
+```{r}
+minmax <- function(x, na.rm = TRUE) {
+    return( (x - min(x)) / (max(x) - min(x)) )
+}
+
+#minmax(spotify$Likes)
+
+```
+
+```{r}
+df <- spotify %>%
+  filter(Artist=="Gorillaz") %>%
+  gather(key = "variable", value = "valeur", Danceability:Tempo)
+  # mutate(valeur = minmax(valeur))
+```
+
+```{r}
+
+ggplot(df, aes(x=variable, y=valeur)) +
+  geom_point() +
+  coord_polar()
+```
+
+
+```{r}
+gather(spotify[1:5,], key = "variable", value = "valeur", Danceability:Tempo)
+```
+
+
+```{r}
+
+top5 <- spotify %>%
+  filter(Artist == "Gorillaz") %>%
+  group_by(Track) %>%
+  summarise(Record = sum(Likes) + sum(Views) + sum(Comments) + sum(Stream)) %>%
+  arrange(desc(Record))
+      
+
+top5
+
+```
+
